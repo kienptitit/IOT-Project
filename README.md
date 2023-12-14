@@ -28,3 +28,13 @@
    cd PythonServer 
    python Server.py
    ```
+# AI Model Training
+## Pets Detection
+- Training data is available at the following [link](https://universe.roboflow.com/ptit-2htcv/plants-pets-detection/browse?queryText=class%3A200&pageSize=50&startingIndex=0&browseQuery=true)
+- Training file is `Training_file/pets-detection.ipynb`
+## Plants Classification
+- Training data is available at the following [link](https://drive.google.com/file/d/1bDMLxHY5U7oZGbfFgtTtTjbGHUhUN4vN/view?usp=drive_link)
+- Training file is `Training_file/iot-project-swin-transformer.ipynb`
+## Plants Grow Monitoring
+- Training data is available at the following [link](https://drive.google.com/file/d/1bDMLxHY5U7oZGbfFgtTtTjbGHUhUN4vN/view?usp=drive_link)
+- Training file is `Training_file/plants-grow.ipynb`
