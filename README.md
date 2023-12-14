@@ -36,5 +36,5 @@
 - Training data is available at the following [link](https://drive.google.com/file/d/1bDMLxHY5U7oZGbfFgtTtTjbGHUhUN4vN/view?usp=drive_link)
 - Training file is `Training_file/iot-project-swin-transformer.ipynb`
 ## Plants Grow Monitoring
-- Training data is available at the following [link](https://drive.google.com/file/d/1bDMLxHY5U7oZGbfFgtTtTjbGHUhUN4vN/view?usp=drive_link)
+- Training data is available at the following [link](https://drive.google.com/file/d/14hg_XmTXlsegH0x5_eYoudUQeG3_gfAI/view?usp=drive_link)
 - Training file is `Training_file/plants-grow.ipynb`
