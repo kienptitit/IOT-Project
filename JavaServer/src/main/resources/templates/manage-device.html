@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head th:replace="~{fragments.html :: head}"> 
+  </head>
+  <body>
+    <div id="imagePopup" class="p-4">
+      <span id="closePopup" onclick="closeImagePopup()">&times;</span>
+      <canvas id="popupCanvas"></canvas>
+    </div>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+      <!-- Spinner Start -->
+      <div
+        id="spinner"
+        class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center"
+      >
+        <div
+          class="spinner-border text-primary"
+          style="width: 3rem; height: 3rem"
+          role="status"
+        >
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      <!-- Spinner End -->
+
+      <div th:replace="~{fragments.html :: sidebar}"></div>
+      <div class="content">
+        <nav th:replace="~{fragments.html :: navbar}"></nav>
+        <div class="container-fluid pt-4 px-4" id="main-content">
+          <div class="row g-4">
+              <div class="col-xl-6 col-sm-12">
+                <h6 class="mb-4">Chọn cây</h6>
+                <nav>
+                  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home"
+                            aria-selected="true">Danh sách</button>
+                    <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-profile" type="button" role="tab"
+                            aria-controls="nav-profile" aria-selected="false">Ảnh</button>
+                  </div>
+                </nav>
+                <div class="tab-content pt-3" id="nav-tabContent">
+                  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <form class="row" id="select-plant-form">
+                      <div class="col-8">
+                        <select class="form-select mb-3 " aria-label="Default select example" id="plant-id">
+                          <th:block th:each="plant : ${plants}">
+                            <option th:value="${plant.id}" th:text="${plant.name}" th:selected="${ device.plant != null && device.plant.id == plant.id }"></option>
+                          </th:block>
+                        </select>
+                      </div>
+                      <div class="col-4">
+                        <button class="btn btn-primary">Chọn</button>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                    <form >
+                      <div class="mb-3 row">
+                        <div class="col-6"><input class="form-control" type="file" id="image-plant-file" accept=".png, .jpg, .jpeg"></div>
+                        <img id="image-plant-file2" src="#" alt="Tuần 2" style="display:none; width:150px; max-height:100px; margin-top:10px;">
+                        <div class="col-6"><button class="btn btn-primary w-100" type="button" onclick="checkPlant()">Nhận diện cây</button></div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-6 col-sm-12">
+                <h6 class="mb-4">Kiểm tra sâu</h6>
+                <nav>
+                  <div class="nav nav-tabs" id="nav-norm-1" role="tablist">
+                    <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-norm-1-panel" type="button" role="tab" aria-controls="nav-norm-1-panel"
+                            aria-selected="true">Chọn ảnh từ máy</button>
+                    <button class="nav-link" id="nav-norm-2" data-bs-toggle="tab"
+                            data-bs-target="#nav-norm-2-panel" type="button" role="tab"
+                            aria-controls="nav-norm-2-panel" aria-selected="false">Chọn chụp ảnh</button>
+                  </div>
+                </nav>
+                <div class="tab-content pt-3" id="nav-tabContent">
+                  <div class="tab-pane fade show active" id="nav-norm-1-panel" role="tabpanel" aria-labelledby="nav-norm-1">
+                    <form >
+                      <div class="mb-3 row">
+                        <div class="col-6"><input class="form-control" type="file" id="image-norm-file" accept=".png, .jpg, .jpeg"></div>
+                        <img id="image-norm-file1" src="#" alt="Tuần 2" style="display:none; width:150px; max-height:100px; margin-top:10px;">
+                        <div class="col-6"><button class="btn btn-primary w-100" type="button" onclick="checkNorm()">Kiểm tra</button></div>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="tab-pane fade" id="nav-norm-2-panel" role="tabpanel" aria-labelledby="nav-norm-2">
+                    <div class="row">
+                      <div class="col-3"><input type="time" class="form-control"></div>
+                      <div class="col-3"><button class="btn btn-secondary">Hẹn giờ</button></div>
+                      <div class="col-6"><button class="btn btn-success">Kiểm tra sâu ngay</button></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <div class="col-xl-12 col-sm-12">
+              <h6 class="mb-4">Theo dõi độ lớn của cây</h6>
+              <nav>
+                <div class="nav nav-tabs" id="nav-norm-1" role="tablist">
+                  <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab"
+                          data-bs-target="#nav-norm-1-panel" type="button" role="tab" aria-controls="nav-norm-1-panel"
+                          aria-selected="true">Chọn ảnh từ máy</button>
+                </div>
+              </nav>
+              <div class="tab-content pt-3" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-norm-1-panel" role="tabpanel" aria-labelledby="nav-norm-1">
+                  <form >
+                    <div class="col-6">
+                      <label for="image-norm-file2">Tuần 1</label>
+                      <input class="form-control" type="file" id="image-norm-file2" accept=".png, .jpg, .jpeg">
+                      <img id="preview-image-norm2" src="#" alt="Tuần 1" style="display:none; max-width:100%; max-height:100px; margin-top:10px;">
+
+                      <label for="image-norm-file3">Tuần 2</label>
+                      <input class="form-control" type="file" id="image-norm-file3" accept=".png, .jpg, .jpeg">
+                      <img id="preview-image-norm3" src="#" alt="Tuần 2" style="display:none; max-width:100%; max-height:100px; margin-top:10px;">
+
+                      <label for="image-norm-file4">Tuần 3</label>
+                      <input class="form-control" type="file" id="image-norm-file4" accept=".png, .jpg, .jpeg">
+                      <img id="preview-image-norm4" src="#" alt="Tuần 3" style="display:none; max-width:100%; max-height:100px; margin-top:10px;">
+
+                      <label for="image-norm-file5">Hiện tại</label>
+                      <input class="form-control" type="file" id="image-norm-file5" accept=".png, .jpg, .jpeg">
+                      <img id="preview-image-norm5" src="#" alt="Hiện tại" style="display:none; max-width:100%; max-height:100px; margin-top:10px;">
+                    </div>
+                    <div class="col-6"><button class="btn btn-primary w-100" type="button" onclick="checkNorm2()">Kiểm tra</button></div>
+                  </form>
+                </div>
+                <div class="tab-pane fade" id="nav-norm-2-panel" role="tabpanel" aria-labelledby="nav-norm-2">
+                  <div class="row">
+                    <div class="col-3"><input type="time" class="form-control"></div>
+                    <div class="col-3"><button class="btn btn-secondary">Hẹn giờ</button></div>
+                    <div class="col-6"><button class="btn btn-success">Kiểm tra sâu ngay</button></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-12 col-xl-4">
+              <div th:if="${device != null}">
+                <form th:object="${device}" id="update-device-form">
+                  <input type="hidden" th:field="*{id}" />
+                  <input type="hidden" th:field="*{ip}"/>
+                  <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label">Device Code</label>
+                    <div class="col-sm-8">
+                      <input
+                        type="text"
+                        class="form-control"
+                        th:field="*{deviceCode}"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label">Tên thiết bị</label>
+                    <div class="col-sm-8">
+                      <input
+                        type="text"
+                        class="form-control"
+                        th:field="*{name}"
+                      />
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label"
+                      >Ngưỡng độ ẩm đất</label
+                    >
+                    <div class="col-sm-8">
+                      <input
+                        type="number"
+                        class="form-control"
+                        th:field="*{soilThreshold}"
+                      />
+                      <p style="color: red"><i id="error-msg-soil-threshold"></i></p>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label"
+                      >Ngưỡng nhiệt độ</label
+                    >
+                    <div class="col-sm-8">
+                      <input
+                        type="number"
+                        class="form-control"
+                        th:field="*{temperatureThreshold}"
+                      />
+                      <p style="color: red;"><i id="error-msg-temperature-threshold"></i></p>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label"
+                      >Thời gian tưới cây (giây)</label
+                    >
+                    <div class="col-sm-8">
+                      <input
+                        type="number"
+                        class="form-control"
+                        th:field="*{pumpTimeMinute}"
+                      />
+                      <p style="color: red;"><i id="error-msg-pump-time-minute"></i></p>
+                    </div>
+                  </div>
+
+                  <th:block>
+                    <div class="row mb-3" th:each="timeCheck, iter : *{timeChecks}" name="time_check">
+                      <label class="col-sm-4 col-form-label" th:text="${'Hẹn giờ ' + (iter.index + 1) }"></label>
+                      <div class="col-sm-8 row p-0 m-0">
+                        <input type="number" hidden th:value="${timeCheck.id}">
+                        <div class="col-lg-9 col-sm-12">
+                          <input type="time" class="form-control" th:value="${timeCheck.timer}" >
+                        </div>
+                        <div class="form-check form-switch col-lg-3 col-sm-12 mt-2">
+                          <input class="form-check-input" type="checkbox" role="switch" th:checked="${timeCheck.isOn}" > 
+                        </div>
+                      </div>
+                    </div>
+                  </th:block>
+                  
+                  <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-block">
+                      Cập nhật
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="col-sm-12 col-xl-8 ">
+              <div class="row g-4">
+                <div class="col-6">
+                  <div class="bg-light rounded h-100 p-4 d-flex justify-content-between">
+                    <div>
+                      <img th:src="@{~/icon/icons8-watering-48.png}" id="img-watering">
+                    </div>
+                    <div class="d-flex flex-column text-end" style="width: 100%;">
+                      <h5>Tưới cây</h5>
+                      <div class="form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="btn-pump"
+                              style="transform: scale(2); margin-right: 1rem"> 
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="bg-light rounded h-100 p-4 d-flex justify-content-between">
+                    <div>
+                      <img th:src="@{~/icon/icons8-light-48.png}" id="img-lamp">
+                    </div>
+                    <div class="d-flex flex-column text-end" style="width: 100%;">
+                      <h5>Đèn </h5>
+                      <div class="form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="btn-lamp"
+                              style="transform: scale(2); margin-right: 1rem" > 
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="bg-light rounded h-100 p-4">
+                    <div class="row">
+                      <div class="col-xl-3">
+                        <img th:src="@{~/icon/icons8-temperature-48.png}">
+                      </div>
+                      <div class="col-xl-9 text-end">
+                        <h5>Nhiệt độ</h5>
+                        <span id="temperature">0</span>
+                      </div>
+                      <!-- <canvas id="temperature-chart" ></canvas> -->
+                      <div class="single-chart" id="temperature-chart">
+                        <svg viewBox="0 0 36 36" class="circular-chart blue">
+                          <path class="circle-bg"
+                            d="M18 2.0845
+                              a 15.9155 15.9155 0 0 1 0 31.831
+                              a 15.9155 15.9155 0 0 1 0 -31.831"
+                          />
+                          <path class="circle"
+                            stroke-dasharray="60, 100"
+                            d="M18 2.0845
+                              a 15.9155 15.9155 0 0 1 0 31.831
+                              a 15.9155 15.9155 0 0 1 0 -31.831"
+                          />
+                          <text x="18" y="20.35" class="percentage">60%</text>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="bg-light rounded h-100 p-4">
+                    <div class="row">
+                      <div class="col-xl-3">
+                        <img th:src="@{~/icon/icons8-sprout-48.png}">
+                      </div>
+                      <div class="col-xl-9 text-end">
+                        <h5>Độ ẩm đất</h5>
+                        <span id="soil">0</span>
+                      </div>
+                      <!-- <canvas id="soil-chart" ></canvas> -->
+                      <div class="single-chart" id="soil-chart">
+                        <svg viewBox="0 0 36 36" class="circular-chart green">
+                          <path class="circle-bg"
+                            d="M18 2.0845
+                              a 15.9155 15.9155 0 0 1 0 31.831
+                              a 15.9155 15.9155 0 0 1 0 -31.831"
+                          />
+                          <path class="circle"
+                            stroke-dasharray="60, 100"
+                            d="M18 2.0845
+                              a 15.9155 15.9155 0 0 1 0 31.831
+                              a 15.9155 15.9155 0 0 1 0 -31.831"
+                          />
+                          <text x="18" y="20.35" class="percentage">60%</text>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="bg-light rounded h-100 p-4">
+                    <div class="row">
+                      <div class="col-xl-3">
+                        <img th:src="@{~/icon/icons8-humidity-48.png}">
+                      </div>
+                      <div class="col-xl-9 text-end">
+                        <h5>Độ ẩm không khí</h5>
+                        <span id="humidity">0</span>
+                      </div>
+                      <!-- <canvas id="humidity-chart" ></canvas> -->
+                      <div class="single-chart" id="humidity-chart">
+                        <svg viewBox="0 0 36 36" class="circular-chart orange">
+                          <path class="circle-bg"
+                            d="M18 2.0845
+                              a 15.9155 15.9155 0 0 1 0 31.831
+                              a 15.9155 15.9155 0 0 1 0 -31.831"
+                          />
+                          <path class="circle"
+                            stroke-dasharray="60, 100"
+                            d="M18 2.0845
+                              a 15.9155 15.9155 0 0 1 0 31.831
+                              a 15.9155 15.9155 0 0 1 0 -31.831"
+                          />
+                          <text x="18" y="20.35" class="percentage">60%</text>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="bg-light rounded h-100 p-4">
+                    <div class="row">
+                      <div class="col-xl-3">
+                        <img th:src="@{~/icon/icons8-rain-48.png}">
+                      </div>
+                      <div class="col-xl-9 text-end">
+                        <div class="d-flex justify-content-between">
+                          <h5>Trời</h5><span id="rain"> Không mưa</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                          <h5>Ánh sáng</h5><span id="light">Yếu</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between">
+                <a class="btn btn-primary mt-2" onclick="readings()">Lịch sử kiểm tra</a>
+                <a class="btn btn-success mt-2" onclick="chartOnOrOff()">Biểu đồ</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/lib/chart/chart.min.js"></script>
+    <script src="/lib/easing/easing.min.js"></script>
+    <script src="/lib/waypoints/waypoints.min.js"></script>
+    <script src="/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="/lib/tempusdominus/js/moment.min.js"></script>
+    <script src="/lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <!-- Template Javascript -->
+    <script src="/js/main.js"></script>
+    <script src="/js/manage-device.js"></script>
+    <script>
+      function previewImage(input, previewId) {
+        var preview = document.getElementById(previewId);
+        var file = input.files[0];
+        var reader = new FileReader();
+
+        reader.onloadend = function () {
+          preview.src = reader.result;
+          preview.style.display = "block";
+        };
+
+        if (file) {
+          reader.readAsDataURL(file);
+        } else {
+          preview.src = "";
+          preview.style.display = "none";
+        }
+      }
+
+      document.getElementById("image-norm-file2").addEventListener("change", function () {
+        previewImage(this, "preview-image-norm2");
+      });
+
+      document.getElementById("image-norm-file3").addEventListener("change", function () {
+        previewImage(this, "preview-image-norm3");
+      });
+
+      document.getElementById("image-norm-file4").addEventListener("change", function () {
+        previewImage(this, "preview-image-norm4");
+      });
+      document.getElementById("image-norm-file5").addEventListener("change", function () {
+        previewImage(this, "preview-image-norm5");
+      });
+      document.getElementById("image-norm-file").addEventListener("change" , function(){
+        previewImage(this, "image-norm-file1")
+      })
+      document.getElementById("image-plant-file").addEventListener("change" , function(){
+        previewImage(this,"image-plant-file2")
+      })
+    </script>
+  </body>
+</html>

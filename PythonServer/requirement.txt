@@ -1,0 +1,6 @@
+torch
+transformers==4.35.0
+huggingface-hub==0.17.3
+Flask
+ultralytics
+Flask-Cors
