@@ -21,6 +21,7 @@
 5. Install the required libraries:
    ```commandline
    conda activate <your enviroment>
+   cd PythonServer
    pip install requirement.txt
    ```
 6. Run Python Server
