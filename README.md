@@ -1,4 +1,4 @@
-# IOT-Group 38
+# IOT-Group 39
 - Nguyễn Trung Kiên - B20DCCN359 
 - Trịnh Tuấn Khanh - B20DCCN371
 # Run Project
